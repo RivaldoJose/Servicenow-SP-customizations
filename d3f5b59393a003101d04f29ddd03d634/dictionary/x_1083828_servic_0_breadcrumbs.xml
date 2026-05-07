@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="bcc52e37936407101d04f29ddd03d6a4" label="Hierarquia breadcrumb" max_length="40" name="x_1083828_servic_0_breadcrumbs" type="collection">
+        <element label="Parâmetros característicos" max_length="40" name="parametros_caracteristicos" type="simple_name_values"/>
+        <element display="true" label="Descrição" mandatory="true" max_length="200" name="descricao" type="string"/>
+        <element default="true" label="Active" max_length="255" name="active" type="boolean"/>
+        <element label="Página pai" max_length="32" name="pagina_pai" reference="x_1083828_servic_0_breadcrumbs" type="reference"/>
+        <element label="Página" mandatory="true" max_length="32" name="pagina" reference="sp_page" type="reference"/>
+        <index name="index">
+            <element name="pagina"/>
+        </index>
+        <index name="index2">
+            <element name="pagina_pai"/>
+        </index>
+    </element>
+</database>

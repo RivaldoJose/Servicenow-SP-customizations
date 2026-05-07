@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="pagina_pai" label="Página pai" language="en" table="x_1083828_servic_0_breadcrumbs">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>pagina_pai</element>
+            <help/>
+            <hint/>
+            <label>Página pai</label>
+            <language>en</language>
+            <name>x_1083828_servic_0_breadcrumbs</name>
+            <plural/>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 13:31:12</sys_created_on>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_name>Página pai</sys_name>
+            <sys_package display_value="Service Portal Customizations" source="x_1083828_servic_0">d3f5b59393a003101d04f29ddd03d634</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Service Portal Customizations">d3f5b59393a003101d04f29ddd03d634</sys_scope>
+            <sys_update_name>sys_documentation_x_1083828_servic_0_breadcrumbs_pagina_pai_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 13:31:14</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

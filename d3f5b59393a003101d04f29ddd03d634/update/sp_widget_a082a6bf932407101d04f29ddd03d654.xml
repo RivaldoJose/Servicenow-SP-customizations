@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function($rootScope, $scope, $timeout, $location, spUtil, spNavStateManager, spModal) {
+    /* widget controller */
+    var c = this;
+    $scope.submitting = false;
+    $scope.mandatory = [];
+    $scope.errorMessages = [];
+    $scope.data.show_sql = false;
+    $scope.saveButtonSuffix = spUtil.getAccelerator('s');
+    $scope.isPageReady = false;
+
+    // Mostrar icone de carregando quando estiver em transição de etapa
+    $scope.$on('sp_loading_indicator', function(e, value) {
+        $scope.loadingIndicator = value;
+    });
+
+    // Melhoria futura: adicionar cores a status de forma mais manutenível
+    c.getColor = function(state) {
+        // constantes que identificam as cores que respresentam cada status
+        var STATE_COLOR = {
+            '-5': '#fff1d4', // Pending
+            '3': '#d4eed8', // Closed Complete
+            '4': "#ffcccc", // Closed incomplete
+            '2': '#d9f4f9' // Work in progress
+        };
+
+        return STATE_COLOR[state] || '#dddddd'; // default: cinza;
+    };
+
+    c.deleteRecord = function() {
+        spModal.confirm("Você tem certeza que deseja prosseguir com a deleção?").then(function(confirmed) {
+            if (confirmed) {
+                c.data.action = 'deleteRecord';
+                c.server.update().then(function(response) {
+                    // Se deleção foi bem sucedida, redirecionar para página pai
+                    if (response.statusDelete) {
+                        $location.url(response.redirectUrl);
+
+                        spUtil.addInfoMessage('Registro deletado com sucesso.');
+                    }
+                });
+            }
+        });
+    };
+
+    $scope.getUIActions = function(type) {
+        if ($scope.data.disableUIActions)
+            return [];
+        if (type) {
+            return $scope.data.f._ui_actions.filter(function(action) {
+                //We handle the primary action button separately.
+                return !action.primary && action['is_' + type];
+            });
+        } else {
+            return $scope.data.f._ui_actions;
+        }
+    }
+
+    $scope.getPrimaryAction = function() {
+        var primaryActions = $scope.data.f._ui_actions.filter(function(action) {
+            return action.primary;
+        });
+        return (primaryActions.length) ? primaryActions[0] : null;
+    };
+
+    //trigger the primary UI Action on save (if there is one)
+    var deregister = $scope.$on('$sp.save', function() {
+        var primaryAction = $scope.getPrimaryAction();
+        if (primaryAction)
+            $scope.triggerUIAction(primaryAction);
+    });
+
+    $scope.$on('$destroy', function() {
+        deregister();
+    });
+
+    $scope.triggerUIAction = function(action) {
+        if ($scope.data.disableUIActions && !action.primary) {
+            return;
+        }
+
+        var activeElement = document.activeElement;
+        if (activeElement) {
+            activeElement.blur();
+        }
+
+        $scope.$evalAsync(function() {
+            if (g_form) {
+                $scope.submitting = true;
+                if (!g_form.submit(action.action_name || action.sys_id))
+                    $scope.submitting = false;
+            }
+        });
+    }
+
+    $scope.$on("spModel.uiActionComplete", function(evt, response, savedFormSysId) {
+        if (!response.isInsert && ($scope.data.sys_id !== savedFormSysId))
+            return;
+
+        $scope.submitting = false;
+        if (response.isActionAborted)
+            return;
+
+        var sysID = (response.isInsert) ? response.sys_id : $scope.data.sys_id;
+        loadForm($scope.data.table, sysID).then(constructResponseHandler(response));
+    });
+
+    function constructResponseHandler(response) {
+        return function() {
+            $rootScope.$broadcast("sp.form.submitted", {
+                sys_id: (response.isInsert) ? response.sys_id : $scope.data.sys_id
+            });
+
+            var message;
+            var eventName = "sp.form.record.updated";
+            if (response.isInsert) {
+                message = $scope.data.recordAddedMsg;
+                var search = $location.search();
+                search.sys_id = response.sys_id;
+                search.spa = 1;
+                $location.search(search).replace();
+                $timeout(function() {
+                    window.location.reload();
+                }, 300);
+            } else
+                message = $scope.data.updatedMsg;
+
+            //$scope.data.hideRelatedLists = hideRelatedLists();
+            $scope.$emit(eventName, $scope.data.f._fields, $scope.data.sys_id);
+            $rootScope.$broadcast(eventName, $scope.data.f._fields, $scope.data.sys_id);
+            $scope.status = message;
+            spUtil.addTrivialMessage(message);
+            spUtil.simulateFakeFormSubmitForAutoComplete('record-custom', $scope.data.f._fields);
+            $timeout(clearStatus, 2000);
+        }
+    }
+
+    function clearStatus() {
+        $scope.status = "";
+    }
+
+    function _save() {
+        var primaryAction = $scope.getPrimaryAction();
+        if (primaryAction)
+            $scope.triggerUIAction(primaryAction);
+    }
+
+    function loadForm(table, sys_id) {
+        var f = {};
+        $scope.data.table = f.table = table;
+        $scope.data.sys_id = f.sys_id = sys_id;
+        f.view = $scope.data.view;
+        return $scope.server.update();
+    }
+
+    var ctrl = this;
+
+    $scope.$on('spModel.fields.rendered', function() {
+        if (ctrl.panels)
+            ctrl.panels.removeClass('shift-out').addClass('shift-in');
+    });
+
+    var g_form;
+
+    function initForm(gFormInstance) {
+        if (gFormInstance.getTableName() == $scope.data.f.table) {
+            g_form = gFormInstance;
+            spNavStateManager.register($scope.data.table, _save, g_form);
+            $scope.isPageReady = true;
+            $timeout(function() {
+                $rootScope.$emit('spModel.gForm.rendered', g_form);
+            }, 175);
+        }
+    }
+
+    $scope.$on('spModel.gForm.initialized', function(e, gFormInstance) {
+        initForm(gFormInstance);
+    });
+
+    // update the comments or worknotes based on activity stream
+    $scope.$on("activity_stream_is_changed", function(event, data) {
+        if (g_form && g_form.hasField(data.fieldName)) {
+            g_form.setValue(data.fieldName, data.input);
+            if (data.fieldToClear != "" && g_form.hasField(data.fieldToClear))
+                g_form.setValue(data.fieldToClear, "");
+        }
+    });
+
+    $scope.hideDuplicateSaveAction = function(item) {
+        if (!$scope.data.advancedUIEnabled)
+            return true;
+        return ($scope.data.advancedUIEnabled && item.sys_id !== "432ace8b0a0a0b34006b02832660c894" && item.sys_id !== "42e780d40a0a0b34007e0d4a52d33405");
+    };
+
+    $rootScope.$on('$sp.html.editor.progress', function(e, conf) {
+        $scope.submitting = conf.state;
+    });
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.selected{&#13;
+  margin-top: -12px;&#13;
+  width: 88px;&#13;
+  margin-left: -10px;&#13;
+  border-top: 2px solid #005F96;&#13;
+}&#13;
+&#13;
+.status-label {&#13;
+  padding: .5rem;&#13;
+  border-radius: 1rem;&#13;
+}&#13;
+&#13;
+.form-container-caption {&#13;
+  display: none;&#13;
+}&#13;
+&#13;
+.cabecalho {&#13;
+  margin-bottom: 16px;&#13;
+  display: flex;&#13;
+  gap: 1rem;&#13;
+  justify-content: space-between;&#13;
+  align-items: center;&#13;
+}&#13;
+&#13;
+.cabecalho .titulo{&#13;
+  color: #003857;&#13;
+  font-weight: 700;&#13;
+  font-size: 22px;&#13;
+}&#13;
+&#13;
+.cabecalho .descricao{&#13;
+  color: #6C7077;&#13;
+  font-size: 16px;&#13;
+}&#13;
+&#13;
+.premium {&#13;
+  padding: 10px;&#13;
+  border: solid 1px #AAB5C2;&#13;
+  border-radius: 8px;&#13;
+  background-color: #f2f4f8;&#13;
+  margin: 10px;&#13;
+}&#13;
+&#13;
+.bloqueado {&#13;
+  position: absolute;&#13;
+  top: 279px;&#13;
+  left: 550px;&#13;
+  z-index: 2;&#13;
+  color: red;&#13;
+}&#13;
+&#13;
+@media (min-width: 1280px){&#13;
+  .diamond-premium {&#13;
+    position: absolute;&#13;
+    top: 282px;&#13;
+    left: 550px;&#13;
+    z-index: 2;&#13;
+  }&#13;
+}&#13;
+&#13;
+// ---------- // -------------------&#13;
+&#13;
+.adequacao-list-section {&#13;
+  display: flex;&#13;
+  flex-direction: column;&#13;
+}&#13;
+&#13;
+.panel-heading.form-inline {&#13;
+  display: none;&#13;
+}&#13;
+&#13;
+.panel-body {&#13;
+  overflow: auto;&#13;
+  padding: 0rem;&#13;
+}&#13;
+&#13;
+#filtersList {&#13;
+  background-color: unset !important;&#13;
+}&#13;
+&#13;
+.th-title {&#13;
+  color: #000 !important;&#13;
+}&#13;
+&#13;
+.panel.b {&#13;
+  border: none;&#13;
+}&#13;
+&#13;
+.panel {&#13;
+  box-shadow: none;&#13;
+  padding: 1.6rem 0rem 1.6rem 0rem;&#13;
+  background-color: transparent;&#13;
+}&#13;
+&#13;
+// ---------- // -------------------&#13;
+&#13;
+.panel-footer {&#13;
+  display: flex;&#13;
+  justify-content: center;&#13;
+  flex-direction: row-reverse;&#13;
+  background-color: transparent;&#13;
+  border: none;&#13;
+  gap: 10px;&#13;
+}&#13;
+&#13;
+.table &gt; thead &gt; tr &gt; th {&#13;
+  /*border-right: 0px solid #ddd;*/&#13;
+  border: none !important;&#13;
+  /*cursor: pointer;*/&#13;
+  vertical-align: middle;&#13;
+}&#13;
+&#13;
+.b {&#13;
+  border: 1px solid #AAB5C2;&#13;
+  border-radius: 32px;&#13;
+}&#13;
+&#13;
+.table-striped  &gt; tbody &gt; tr:nth-of-type(odd) {&#13;
+  background-color: #f2f4f8;&#13;
+}&#13;
+&#13;
+.table-striped  &gt; tbody &gt; tr &gt; td{&#13;
+  border: none;&#13;
+}&#13;
+&#13;
+.table-striped td.selected a:not(.text-muted):not(.btn) {&#13;
+  color: #fff !important;&#13;
+  font-weight: bold;&#13;
+}&#13;
+&#13;
+.sp-list-cell.selected {&#13;
+  background-color: rgb(97, 129, 168);&#13;
+}&#13;
+&#13;
+.footer-container {&#13;
+  margin-top: 16px;&#13;
+  margin-bottom: 32px;&#13;
+} &#13;
+&#13;
+.btn-primary {&#13;
+  background-color: #003857;&#13;
+}&#13;
+&#13;
+.btn-primary:hover{&#13;
+  background-color: #006699;&#13;
+}&#13;
+&#13;
+.spinner_overlay {&#13;
+  display: flex;&#13;
+  justify-content: center;&#13;
+  align-items: center;&#13;
+  position: absolute;&#13;
+  left: 0;&#13;
+  top: 0;&#13;
+  width: 100%;&#13;
+  height: 100%;&#13;
+  background-color: #fff;&#13;
+  opacity: 0.4;&#13;
+  z-index: 1000;&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>record-custom</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Record custom</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[function getParentPage(pageId) {
+
+    var page = new GlideRecord('x_1083828_servic_0_breadcrumbs');
+    page.addQuery('pagina.id', pageId);
+    page.query();
+
+    while (page.next()) {
+        if (page.getValue('parametros_caracteristicos')) {
+            var parentPageID = '';
+            var paramsFilter = JSON.parse(page.getValue('parametros_caracteristicos'));
+
+            const isValid = Object.keys(paramsFilter).every(param =>
+                $sp.getParameter(param) == paramsFilter[param]
+            );
+
+            // Se os parâmetros característicos da hierarquia não foram antendidos, pula iteração para próxima possível hierarquia da página
+            if (!isValid)
+                continue;
+
+            // Se existir página pai, busca referência dela
+            if (page.getValue('pagina_pai')) {
+                parentPageID = page.pagina_pai.pagina.id;
+                paramsFilter = {};
+
+                var parentPage = new GlideRecord('x_bdb_5aa_00001281_breadcrumb_central_pp');
+                parentPage.addQuery('pagina.id', parentPageID);
+                parentPage.query();
+
+                if (parentPage.next()) {
+                    if (parentPage.getValue('parametros_caracteristicos'))
+                        paramsFilter = JSON.parse(parentPage.getValue('parametros_caracteristicos'));
+                }
+
+            }
+
+            var href = '?id=' + parentPageID;
+
+            // Adiciona parâmetros à URL
+            for (const param in paramsFilter) {
+                href += '&' + param + '=' + paramsFilter[param];
+            }
+
+            return href;
+        }
+    }
+    var portalGr = $sp.getPortalRecord();
+
+    return '/' + portalGr.getValue('url_suffix');
+}
+
+
+(function() {
+
+    data.recordAddedMsg = gs.getMessage("Record Added");
+    data.updatedMsg = gs.getMessage("Record Updated");
+
+    if (input) {
+        data.table = input.table;
+        data.sys_id = input.sys_id;
+        data.view = input.view;
+
+        var result = {};
+        if (input._fields) {
+            result = $sp.saveRecord(input.table, input.sys_id, input._fields);
+            data.sys_id = result.sys_id;
+        }
+
+        if (input.sys_id == '-1')
+            data.isNewRecord = true;
+        if (input.isPopup === true)
+            isPopup = true;
+
+        if (input.action == 'getUiActionMessage') {
+            var uiAction = new GlideRecord('sys_ui_action');
+            if (uiAction.get(input.actionSysID))
+                data.classMessage = uiAction.getValue('messages');
+
+        } else if (input.action == 'deleteRecord') {
+            var grDel = new GlideRecord(data.table);
+            if (grDel.get(data.sys_id)) {
+                data.statusDelete = grDel.deleteRecord();
+
+                // Se deleção foi bem sucedida, buscar link da página pai
+                if (data.statusDelete)
+                    data.redirectUrl = getParentPage($sp.getParameter('id'));
+            }
+            return;
+        }
+
+
+    } else {
+        data.table = options.table || $sp.getParameter("t") || $sp.getParameter("table") || $sp.getParameter("sl_table");
+        data.sys_id = options.sys_id || $sp.getParameter("sys_id") || $sp.getParameter("sl_sys_id");
+        if (!data.sys_id && options.sys_id_required != "true")
+            data.sys_id = "-1";
+        data.view = options.view || $sp.getParameter("view") || $sp.getParameter("v"); // no default
+    }
+
+    data.query = $sp.getParameter("query") || options.query || "";
+
+    var gr = new GlideRecord(data.table);
+    gr.get(data.sys_id);
+
+    if (data.sys_id != "-1" && !gr.canRead())
+        return; // can't see requested record
+
+    if (data.sys_id == "-1" && !gr.canCreate())
+        return; // can't create a new record
+
+    data.isValid = gr.isValid() || data.sys_id == "-1";
+    if (!data.isValid)
+        return;
+
+    data.canDelete = data.sys_id != '-1' && gr.canDelete();
+
+    data.currenState = {
+        displayValue: gr.getDisplayValue('state') || '',
+        value: gr.getValue('state') || ''
+    };
+
+    data.f = $sp.getForm(data.table, data.sys_id, data.query, data.view, false);
+
+    var main_title = gr.getDisplayValue();
+
+    if (data.sys_id == '-1') {
+        main_title = 'Novo ' + gr.getClassDisplayValue();
+    }
+
+	data.mainTitle = main_title;
+
+    // var objOptionsHeader = {
+    //     title_top: gr.getClassDisplayValue(),
+    //     main_title: main_title,
+    //     description: '',
+    //     color_title_top: '#3D5AFF',
+    //     color_main_title: '#003857',
+    //     font_size_main_title: '32px',
+    //     color_description: '#6C7077',
+    //     font_size_description: '16px'
+    // };
+
+    // data.widgetHeaderTitle = $sp.getWidget('hp_ct_titles_section', objOptionsHeader);
+
+    // Activity formatter is hardcoded to set specific options
+    for (var f in data.f._formatters) {
+        var fm = data.f._formatters[f];
+
+        if (fm.formatter == "activity.xml") {
+            fm.hardcoded = true;
+            fm.widgetInstance = $sp.getWidget('widget-ticket-conversation', {
+                table: data.table,
+                sys_id: data.sys_id,
+                includeExtended: true,
+                hideAttachmentBtn: true,
+                title: "${Activity}",
+                use_dynamic_placeholder: true,
+                btnLabel: "${Post}"
+            });
+        } else if (fm.formatter == "com_glideapp_servicecatalog_veditor" || fm.formatter == "com_glideapp_questionset_default_question_editor") {
+            var qsConfig = $sp.getValue('quick_start_config');
+            if (qsConfig)
+                qsConfig = JSON.parse(qsConfig)[0];
+            fm.widgetInstance = $sp.getWidget(fm.widget, {
+                table: data.table,
+                sys_id: data.sys_id,
+                readonly_variable_editor: qsConfig ? qsConfig.readonly_variable_editor : 'false'
+            });
+        } else
+            fm.widgetInstance = $sp.getWidget(fm.widget, data);
+    }
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 13:20:49</sys_created_on>
+        <sys_id>a082a6bf932407101d04f29ddd03d654</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Record custom</sys_name>
+        <sys_package display_value="Service Portal Customizations" source="x_1083828_servic_0">d3f5b59393a003101d04f29ddd03d634</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal Customizations">d3f5b59393a003101d04f29ddd03d634</sys_scope>
+        <sys_update_name>sp_widget_a082a6bf932407101d04f29ddd03d654</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 14:27:36</sys_updated_on>
+        <template><![CDATA[<div>
+  <div class='cabecalho'>
+    <sp-widget widget='data.widgetHeaderTitle'></sp-widget>
+    <h2 class>{{data.mainTitle}}</h2>
+    <span class="status-label" ng-if="data.currenState.value" style="background-color: {{ c.getColor(data.currenState.value) }};"><i class="fa fa-circle" style="color: {{ c.getColor(data.currenState.value) }}; filter: brightness(0.5);"></i>&nbsp;&nbsp;{{ data.currenState.displayValue }}</span>
+  </div>
+  <div>
+    <form method="POST" role="form" name="meuTimeSolucao" id="meuTimeSolucao" ng-class="">
+      <sp-model form-model="data.f" mandatory></sp-model>    
+      <div class="spinner_overlay" align="center" ng-show="loadingIndicator">
+        <i class="fa fa-spinner fa-pulse fa-4x fa-fw"></i>
+      </div>
+    </form>
+
+    <div class="footer-container">
+      <!--<button form="meuTimeSolucao" type="button" class="btn btn-default" ng-click="c.cancelar()">Cancelar</button>-->
+      <button ng-if="!data.isNewRecord && data.canDelete" type="button" ng-click="c.deleteRecord()" class="btn btn-default">${Delete}</button>
+
+
+      <button ng-click="triggerUIAction(action)" ng-disabled="submitting" ng-repeat="action in getUIActions('button') | filter: hideDuplicateSaveAction" class="btn action-btn pull-righ" ng-class="::getButtonClass(action)" gsft_id="{{::action.sys_id}}">{{action.name}}</button>
+      <span>{{status}}</span>
+      <button ng-if="getPrimaryAction()" type="submit" ng-click="triggerUIAction(getPrimaryAction())" ng-disabled="submitting" class="btn btn-primary action-btn pull-right" gsft_id="{{::getPrimaryAction().sys_id ? getPrimaryAction().sys_id : ''}}">${Save} <span ng-if="saveButtonSuffix">(${{{saveButtonSuffix}}})</span></button>
+      <div style="clear: both;"></div>
+      <div ng-if="mandatory.length" class="alert alert-info" style="margin-top: .5em" aria-live="polite" aria-atomic="true">
+        <span ng-if="mandatory.length > 0">${Required information} </span>
+        <span ng-repeat="f in mandatory" class="label sc-field-error-label" ng-bind="f.label"></span>
+      </div>
+    </div>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

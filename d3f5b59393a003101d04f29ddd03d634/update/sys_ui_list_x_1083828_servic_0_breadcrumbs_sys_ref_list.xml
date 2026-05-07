@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_list parent="" relationship="" sys_domain="global" table="x_1083828_servic_0_breadcrumbs" version="2" view="sys_ref_list">
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>descricao</element>
+            <list_id display_value="x_1083828_servic_0_breadcrumbs" element="NULL" name="x_1083828_servic_0_breadcrumbs" parent="NULL" relationship="NULL" sys_domain="global" view="d0c3d060f50003100a22c0b3dfa1515a">3d6e26b793a407101d04f29ddd03d6b5</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>0</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 14:02:53</sys_created_on>
+            <sys_id>bd6e26b793a407101d04f29ddd03d6b6</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 14:02:53</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>active</element>
+            <list_id display_value="x_1083828_servic_0_breadcrumbs" element="NULL" name="x_1083828_servic_0_breadcrumbs" parent="NULL" relationship="NULL" sys_domain="global" view="d0c3d060f50003100a22c0b3dfa1515a">3d6e26b793a407101d04f29ddd03d6b5</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>1</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 14:02:53</sys_created_on>
+            <sys_id>356e26b793a407101d04f29ddd03d6b7</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 14:02:53</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>pagina</element>
+            <list_id display_value="x_1083828_servic_0_breadcrumbs" element="NULL" name="x_1083828_servic_0_breadcrumbs" parent="NULL" relationship="NULL" sys_domain="global" view="d0c3d060f50003100a22c0b3dfa1515a">3d6e26b793a407101d04f29ddd03d6b5</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>2</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 14:02:53</sys_created_on>
+            <sys_id>b96e26b793a407101d04f29ddd03d6b7</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 14:02:53</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>pagina_pai</element>
+            <list_id display_value="x_1083828_servic_0_breadcrumbs" element="NULL" name="x_1083828_servic_0_breadcrumbs" parent="NULL" relationship="NULL" sys_domain="global" view="d0c3d060f50003100a22c0b3dfa1515a">3d6e26b793a407101d04f29ddd03d6b5</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>3</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 14:02:53</sys_created_on>
+            <sys_id>316e26b793a407101d04f29ddd03d6b8</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 14:02:53</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>parametros_caracteristicos</element>
+            <list_id display_value="x_1083828_servic_0_breadcrumbs" element="NULL" name="x_1083828_servic_0_breadcrumbs" parent="NULL" relationship="NULL" sys_domain="global" view="d0c3d060f50003100a22c0b3dfa1515a">3d6e26b793a407101d04f29ddd03d6b5</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>4</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 14:02:53</sys_created_on>
+            <sys_id>b56e26b793a407101d04f29ddd03d6b8</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 14:02:53</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element/>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <name>x_1083828_servic_0_breadcrumbs</name>
+            <parent/>
+            <position/>
+            <relationship/>
+            <sum>false</sum>
+            <sys_class_name>sys_ui_list</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 14:02:53</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>3d6e26b793a407101d04f29ddd03d6b5</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_1083828_servic_0_breadcrumbs</sys_name>
+            <sys_package display_value="Service Portal Customizations" source="x_1083828_servic_0">d3f5b59393a003101d04f29ddd03d634</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Service Portal Customizations">d3f5b59393a003101d04f29ddd03d634</sys_scope>
+            <sys_update_name>sys_ui_list_x_1083828_servic_0_breadcrumbs_sys_ref_list</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 14:02:53</sys_updated_on>
+            <sys_user/>
+            <view display_value="Reference List" name="sys_ref_list">d0c3d060f50003100a22c0b3dfa1515a</view>
+            <view_name/>
+        </sys_ui_list>
+    </sys_ui_list>
+</record_update>

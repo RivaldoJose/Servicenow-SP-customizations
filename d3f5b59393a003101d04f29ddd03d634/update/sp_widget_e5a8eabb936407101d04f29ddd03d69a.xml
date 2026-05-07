@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function() {
+  /* widget controller */
+  var c = this;
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css>/* Breadcrumbs */&#13;
+.breadcrumbs {&#13;
+  display: flex;&#13;
+  flex-direction: row;&#13;
+  align-items: center;&#13;
+  font-family: "BancoDoBrasil Textos";&#13;
+  color: $fazai-color-link-blue-default;&#13;
+  font-weight: 400;&#13;
+  height: 25px;&#13;
+  gap: 8px;&#13;
+  margin: 48px 0px;&#13;
+}&#13;
+&#13;
+.breadcrumbs a {&#13;
+  color: $fazai-color-link-blue-default;&#13;
+}&#13;
+&#13;
+&#13;
+.breadcrumbs__back {&#13;
+  font-size: 16px;&#13;
+  display: flex;&#13;
+  flex-direction: row;&#13;
+  gap: 8px;&#13;
+  align-items: center;&#13;
+}&#13;
+&#13;
+.breadcrumbs__divider {&#13;
+  border-left: 1px;&#13;
+  border-right: 0px;&#13;
+  border-style: solid;&#13;
+  border-color: #E5E7EB;&#13;
+  margin: 0 5px;&#13;
+  height: 25px;&#13;
+}&#13;
+&#13;
+.breadcrumbs__pages {&#13;
+	font-size: 18px;&#13;
+}&#13;
+&#13;
+.breadcrumbs__pages a + a::before {&#13;
+  content: " / "; /* The text you want to insert */&#13;
+  color: $fazai-color-text-default;&#13;
+  font-weight: 400;&#13;
+  font-size: 18px;&#13;
+  margin: 0 5px;&#13;
+}&#13;
+&#13;
+.breadcrumbs__last {&#13;
+  color: $fazai-color-text-default !important;&#13;
+  font-weight: 700;&#13;
+  font-size: 22px;&#13;
+  line-height: 35.2px;&#13;
+  margin: 0px;&#13;
+  pointer-events: none; /* Disables all pointer events */&#13;
+  cursor: default;       /* Sets cursor to default instead of a pointer */&#13;
+}&#13;
+&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>breadcrumbs-custom</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Breadcrumbs Custom</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[function getPageTitle(pageID) {
+    var page = new GlideRecord('sp_page');
+    if (page.get('id', pageID))
+        return page.getDisplayValue('title');
+
+    return "Página";
+}
+
+function getParentPage(pageId, pages = [], verifiedPages = []) {
+	// Adicionar regra para evitar recursão infinita
+	if (verifiedPages.indexOf(pageId.toString()) > -1)
+		return pages;
+
+    pages.unshift({
+		id: pageId,
+		title: getPageTitle(pageId),
+		url: '?id=' + pageId
+	}); // Adicionar no começo do array
+
+    var page = new GlideRecord('x_1083828_servic_0_breadcrumbs');
+    page.addQuery('pagina.id', pageId);
+    page.query();
+
+    while (page.next()) {
+		if (page.getValue('parametros_caracteristicos') ) {
+			const paramsFilter = JSON.parse(page.getValue('parametros_caracteristicos'));
+
+			// Se a página atual é final do breadcrumbs, validar parâmetros
+			if (pageId == $sp.getParameter('id')) {
+				const isValid = Object.keys(paramsFilter).every(param => 
+					$sp.getParameter(param) == paramsFilter[param]
+				);
+				
+				// Se os parâmetros característicos da hierarquia não foram antendidos, pula iteração para próxima possível hierarquia da página
+				if (!isValid)
+					continue;
+			}
+
+			// Adiciona parâmetros à URL
+			for (const param in paramsFilter) {
+				pages[0].url += '&' + param + '=' + paramsFilter[param];
+			}
+		}
+
+		verifiedPages.push(pageId);
+		
+        if (page.getValue('pagina_pai'))
+            return getParentPage(page.pagina_pai.pagina.id.toString(), pages, verifiedPages);
+    }
+    return pages;
+}
+
+
+(function() {
+    /* populate the 'data' object */
+    /* e.g., data.table = $sp.getValue('table'); */
+
+	data.urlSuffix = $sp.getValue('url_suffix');
+	const portalRecord = $sp.getPortalRecord();
+
+	data.homepageTitle = portalRecord.homepage.title.getDisplayValue();
+
+    var currentPage = $sp.getParameter('id');
+
+    data.parentPages = getParentPage(currentPage);
+	data.backButtonHref = ''; // Por padrão redirecionar para página inicial do portal
+
+	if (data.parentPages.length > 1) { // Se houver página pai, redirecionar para ela
+		data.backButtonHref = '?id=' + data.parentPages[data.parentPages.length - 2].id;
+	}
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 13:39:21</sys_created_on>
+        <sys_id>e5a8eabb936407101d04f29ddd03d69a</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Breadcrumbs Custom</sys_name>
+        <sys_package display_value="Service Portal Customizations" source="x_1083828_servic_0">d3f5b59393a003101d04f29ddd03d634</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Service Portal Customizations">d3f5b59393a003101d04f29ddd03d634</sys_scope>
+        <sys_update_name>sp_widget_e5a8eabb936407101d04f29ddd03d69a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 14:54:08</sys_updated_on>
+        <template><![CDATA[<section class="breadcrumbs">
+  <a href="{{ ::data.backButtonHref }}" class="breadcrumbs__back"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a>
+  <span class="breadcrumbs__divider"></span>
+
+  <div class="breadcrumbs__pages">
+    <!--<a href="/sp" ng-if="data.url_suffix != 'sp'">SP</a>-->
+    <a href="/{{::data.urlSuffix}}">{{::data.homepageTitle}}</a>
+    <a ng-class="{'breadcrumbs__last': $last}" ng-repeat="item in data.parentPages" href="{{ item.url }}">{{ ::item.title }}</a>
+    
+  </div>
+</section>]]></template>
+    </sp_widget>
+</record_update>
