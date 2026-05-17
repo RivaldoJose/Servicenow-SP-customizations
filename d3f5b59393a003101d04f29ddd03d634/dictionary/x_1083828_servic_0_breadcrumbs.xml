@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="bcc52e37936407101d04f29ddd03d6a4" label="Hierarquia breadcrumb" max_length="40" name="x_1083828_servic_0_breadcrumbs" type="collection">
+        <element calculation="(function calculatedFieldValue(current) {&#13;&#10;&#13;&#10;&#9;const paramsStr = current.parametros_caracteristicos;&#13;&#10;&#13;&#10;&#9;if (paramsStr == '' || paramsStr == null)&#13;&#10;&#9;&#9;return 0;&#13;&#10;&#13;&#10;&#9;return Number(Object.keys(JSON.parse(paramsStr)).length);  // return the calculated value&#13;&#10;&#13;&#10;})(current);" default="0" label="Quantidade parâmetros característicos" max_length="40" name="quantidade_parametros_caracteristicos" type="integer"/>
         <element label="Parâmetros característicos" max_length="40" name="parametros_caracteristicos" type="simple_name_values"/>
         <element display="true" label="Descrição" mandatory="true" max_length="200" name="descricao" type="string"/>
         <element label="Parâmetros da página pai" max_length="40" name="parametros_da_pagina_pai" type="simple_name_values"/>

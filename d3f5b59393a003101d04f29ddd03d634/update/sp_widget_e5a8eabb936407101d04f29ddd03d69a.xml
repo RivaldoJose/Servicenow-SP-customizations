@@ -11,8 +11,6 @@
   display: flex;&#13;
   flex-direction: row;&#13;
   align-items: center;&#13;
-  font-family: "BancoDoBrasil Textos";&#13;
-  color: $fazai-color-link-blue-default;&#13;
   font-weight: 400;&#13;
   height: 25px;&#13;
   gap: 8px;&#13;
@@ -20,7 +18,7 @@
 }&#13;
 &#13;
 .breadcrumbs a {&#13;
-  color: $fazai-color-link-blue-default;&#13;
+  color: blue;&#13;
 }&#13;
 &#13;
 &#13;
@@ -47,14 +45,14 @@
 &#13;
 .breadcrumbs__pages a + a::before {&#13;
   content: " / "; /* The text you want to insert */&#13;
-  color: $fazai-color-text-default;&#13;
+  color: blue;&#13;
   font-weight: 400;&#13;
   font-size: 18px;&#13;
   margin: 0 5px;&#13;
 }&#13;
 &#13;
 .breadcrumbs__last {&#13;
-  color: $fazai-color-text-default !important;&#13;
+  color: dark-gray !important;&#13;
   font-weight: 700;&#13;
   font-size: 22px;&#13;
   line-height: 35.2px;&#13;
@@ -81,137 +79,168 @@
         <roles/>
         <script><![CDATA[function getPageTitle(pageID) {
     var page = new GlideRecord('sp_page');
-    if (page.get('id', pageID))
-        return page.getDisplayValue('title');
-
-    return "Página";
+    return page.get('id', pageID) ? page.getDisplayValue('title') : "Página";
 }
 
-function getParentPage(pageId, pages = [], verifiedPages = [], parentParamsUrl = '') {
-    // Adicionar regra para evitar recursão infinita
-    if (verifiedPages.indexOf(pageId.toString()) > -1)
-        return pages;
-
-    const defaultUrl = '?id=' + pageId + parentParamsUrl;
-
-    pages.unshift({
-        id: pageId,
-        title: getPageTitle(pageId),
-        url: defaultUrl,
-        params: {}
-    }); // Adicionar no começo do array
-
-    verifiedPages.push(pageId);
-
-    var page = new GlideRecord('x_1083828_servic_0_breadcrumbs');
-    page.addQuery('pagina.id', pageId);
-	page.orderByDesc('parametros_caracteristicos');
-    page.query();
-
-    while (page.next()) {
-        pages[0].url = defaultUrl;
-        const paramsFilterStr = page.getValue('parametros_caracteristicos');
-
-        if (paramsFilterStr) {
-            const paramsFilter = JSON.parse(paramsFilterStr);
-
-            // Se a página atual é final do breadcrumbs, validar parâmetros
-            if (pageId == $sp.getParameter('id')) {
-                const isValid = Object.keys(paramsFilter).every(param =>
-                    $sp.getParameter(param) == paramsFilter[param]
-                );
-
-                // Se os parâmetros característicos da hierarquia não foram antendidos, pula iteração para próxima possível hierarquia da página
-                if (!isValid)
-                    continue;
-            }
-
-            pages[0].title = page.getValue('descricao'); // Substitui o título da página pelo do breadcrumb
-
-			gs.addInfoMessage(pages[0].title);
-
-			/**
-			 * Quando buscando a referência do registro pai, ele está buscando através do id da página na sp_page, o que faz com que seja necessário buscar dentro a lista de todos os registros de breadcrumbs dessa página. Contudo, não é necessário fazer essa busca visto que na recursão anterior já tinhamos a informação do sys_id do breadcrumb pai, obtido através do campo "pagina_pai" 
-			 */
-
-            // Adiciona parâmetros à URL
-            for (const param in paramsFilter) {
-                pages[0].url += '&' + param + '=' + paramsFilter[param];
-            }
-        }
-
-        if (page.getValue('pagina_pai')) {
-            const paramsParent = page.getValue('parametros_da_pagina_pai');
-            var defaultParentUrl = '';
-
-            if (paramsParent != null && paramsParent != '') {
-                var paramsParentObj = JSON.parse(paramsParent);
-                for (var paramParent in paramsParentObj) {
-                    var parentValue = paramsParentObj[paramParent];
-
-                    // Verifica se contém ${ usando indexOf
-                    if (parentValue && parentValue.indexOf('${') !== -1 && parentValue.indexOf('}') !== -1) {
-                        // PARÂMETRO DINÂMICO - Sem regex
-
-                        parentValue = parentValue.toString();
-
-                        var dynamicParam = parentValue.substring(2, Number(parentValue.length) - 1);
-
-                        var paramValue = null;
-
-                        if (pageId == $sp.getParameter('id'))
-                            paramValue = $sp.getParameter(dynamicParam);
-                        else // Busca o valor do parâmetro na URL atual usando split
-                            paramValue = getParameterFromUrl(pages[0].url, dynamicParam);
-
-                        if (paramValue) {
-                            // Adiciona o parâmetro com o valor encontrado na URL atual
-                            defaultParentUrl += '&' + paramParent + '=' + paramValue;
-                        }
-                    } else {
-                        defaultParentUrl += '&' + paramParent + '=' + parentValue;
-                    }
-                }
-            }
-
-            return getParentPage(page.pagina_pai.pagina.id.toString(), pages, verifiedPages, defaultParentUrl);
-        }
-    }
-
-    return pages;
-}
-
-// Função auxiliar para extrair parâmetro da URL sem regex
 function getParameterFromUrl(url, paramName) {
-
-    // Encontra a posição do parâmetro na URL
     var paramString = paramName + '=';
     var paramIndex = url.indexOf(paramString);
-
+    
     if (paramIndex === -1) {
-        // Tenta encontrar com ? ou & antes
         paramIndex = url.indexOf('?' + paramString);
         if (paramIndex === -1) {
             paramIndex = url.indexOf('&' + paramString);
-            if (paramIndex === -1) {
-                return null;
-            }
+            if (paramIndex === -1) return null;
         }
     }
-
-    // Ajusta o índice para o início do valor
+    
     var valueStartIndex = url.indexOf('=', paramIndex) + 1;
-
-    // Encontra o fim do valor (próximo & ou fim da string)
     var valueEndIndex = url.indexOf('&', valueStartIndex);
-    if (valueEndIndex === -1) {
-        valueEndIndex = url.length;
-    }
-
-    // Extrai o valor
-    return url.substring(valueStartIndex, valueEndIndex);
+    
+    return url.substring(valueStartIndex, valueEndIndex === -1 ? url.length : valueEndIndex);
 }
 
+function processDynamicParams(paramsParentStr, currentUrl, isCurrentPage) {
+    if (!paramsParentStr || paramsParentStr === '') return '';
+    
+    var paramsParentObj = JSON.parse(paramsParentStr);
+    var parentParamsUrl = '';
+    
+    for (var paramParent in paramsParentObj) {
+        var parentValue = paramsParentObj[paramParent];
+        
+        // Verifica se é parâmetro dinâmico ${...}
+        if (parentValue && parentValue.indexOf('${') !== -1 && parentValue.indexOf('}') !== -1) {
+            parentValue = parentValue.toString();
+            var dynamicParam = parentValue.substring(2, parentValue.length - 1);
+            
+            var paramValue = isCurrentPage ? $sp.getParameter(dynamicParam) : getParameterFromUrl(currentUrl, dynamicParam);
+            
+            if (paramValue) {
+                parentParamsUrl += '&' + paramParent + '=' + paramValue;
+            }
+        } else {
+            parentParamsUrl += '&' + paramParent + '=' + parentValue;
+        }
+    }
+    
+    return parentParamsUrl;
+}
+
+function processPageRecord(page, pages, defaultUrl, isCurrentPage) {
+    pages[0].url = defaultUrl;
+    var paramsFilterStr = page.getValue('parametros_caracteristicos');
+    
+    if (paramsFilterStr) {
+        var paramsFilter = JSON.parse(paramsFilterStr);
+        
+        // Se é página atual, valida os parâmetros
+        if (isCurrentPage) {
+            var isValid = Object.keys(paramsFilter).every(function(param) {
+                return $sp.getParameter(param) == paramsFilter[param];
+            });
+            
+            if (!isValid) return false;
+        }
+        
+        pages[0].title = page.getValue('descricao');
+        
+        for (var param in paramsFilter) {
+            pages[0].url += '&' + param + '=' + paramsFilter[param];
+        }
+    }
+    
+    return true;
+}
+
+function getParentPage(pageId, pageSysID, pages, verifiedPages, parentParamsUrl) {
+    // Evitar recursão infinita
+    if (verifiedPages.indexOf(pageId.toString()) > -1) return pages;
+    
+    var defaultUrl = '?id=' + pageId + parentParamsUrl;
+    
+    pages.unshift({
+        id: pageId,
+        title: getPageTitle(pageId),
+        url: defaultUrl
+    });
+    
+    verifiedPages.push(pageId);
+    
+    var page = new GlideRecord('x_1083828_servic_0_breadcrumbs');
+    page.addQuery('sys_id', pageSysID);
+    page.query();
+    
+    if (page.next()) {
+        var isCurrentPage = (pageId == $sp.getParameter('id'));
+        
+        // Processa o registro
+        if (!processPageRecord(page, pages, defaultUrl, isCurrentPage)) {
+            return pages;
+        }
+        
+        // Processa página pai
+        if (page.getValue('pagina_pai')) {
+            var parentParamsUrl = processDynamicParams(
+                page.getValue('parametros_da_pagina_pai'),
+                pages[0].url,
+                isCurrentPage
+            );
+            
+            return getParentPage(
+                page.pagina_pai.pagina.id.toString(),
+                page.getValue('pagina_pai'),
+                pages,
+                verifiedPages,
+                parentParamsUrl
+            );
+        }
+    }
+    
+    return pages;
+}
+
+function getBreadcrumb(pageId) {
+    var pages = [{
+        id: pageId,
+        title: getPageTitle(pageId),
+        url: '?id=' + pageId
+    }];
+    
+    var page = new GlideRecord('x_1083828_servic_0_breadcrumbs');
+    page.addQuery('pagina.id', pageId);
+    page.orderByDesc('quantidade_parametros_caracteristicos');
+    page.query();
+    
+    while (page.next()) {
+        var defaultUrl = '?id=' + pageId;
+        var isCurrentPage = true;
+        
+        // Processa o registro
+        if (!processPageRecord(page, pages, defaultUrl, isCurrentPage)) {
+            continue;
+        }
+        
+        // Processa página pai
+        if (page.getValue('pagina_pai')) {
+            var parentParamsUrl = processDynamicParams(
+                page.getValue('parametros_da_pagina_pai'),
+                pages[0].url,
+                isCurrentPage
+            );
+            
+            return getParentPage(
+                page.pagina_pai.pagina.id.toString(),
+                page.getValue('pagina_pai'),
+                pages,
+                [pageId],
+                parentParamsUrl
+            );
+        }
+    }
+    
+    return pages;
+}
 
 (function() {
     /* populate the 'data' object */
@@ -224,7 +253,7 @@ function getParameterFromUrl(url, paramName) {
 
     var currentPage = $sp.getParameter('id');
 
-    data.parentPages = getParentPage(currentPage);
+    data.parentPages = getBreadcrumb(currentPage);
     data.backButtonHref = ''; // Por padrão redirecionar para página inicial do portal
 
     if (data.parentPages.length > 1) { // Se houver página pai, redirecionar para ela
@@ -237,14 +266,14 @@ function getParameterFromUrl(url, paramName) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-05-06 13:39:21</sys_created_on>
         <sys_id>e5a8eabb936407101d04f29ddd03d69a</sys_id>
-        <sys_mod_count>38</sys_mod_count>
+        <sys_mod_count>46</sys_mod_count>
         <sys_name>Breadcrumbs Custom</sys_name>
         <sys_package display_value="Service Portal Customizations" source="x_1083828_servic_0">d3f5b59393a003101d04f29ddd03d634</sys_package>
         <sys_policy/>
         <sys_scope display_value="Service Portal Customizations">d3f5b59393a003101d04f29ddd03d634</sys_scope>
         <sys_update_name>sp_widget_e5a8eabb936407101d04f29ddd03d69a</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-05-17 04:15:50</sys_updated_on>
+        <sys_updated_on>2026-05-17 17:06:07</sys_updated_on>
         <template><![CDATA[<section class="breadcrumbs">
   <a href="{{ ::data.backButtonHref }}" class="breadcrumbs__back"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a>
   <span class="breadcrumbs__divider"></span>
