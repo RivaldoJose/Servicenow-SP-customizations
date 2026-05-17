@@ -4,11 +4,11 @@
             <is_plain_text>true</is_plain_text>
             <name/>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:41</sys_created_on>
-            <sys_id>cffca6f393a407101d04f29ddd03d64e</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>721cb70093bc87101d04f29ddd03d66d</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:41</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <text>Os parâmetros característicos abaixo irão determinar em que casos esta hierarquia de página será considerada. Caso nenhum parâmetro seja adicionado, a hierarquia de página será considerada sempre para a página em questão.</text>
             <type display_value="Info Box Blue">753f88a80f930000b12e6903cfe01206</type>
         </sys_ui_annotation>
@@ -16,13 +16,13 @@
             <element>pagina</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>93fca6f393a407101d04f29ddd03d669</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>361cb70093bc87101d04f29ddd03d688</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -30,13 +30,13 @@
             <element>active</element>
             <position>1</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>13fca6f393a407101d04f29ddd03d66a</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>fa1cb70093bc87101d04f29ddd03d689</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -44,13 +44,13 @@
             <element>.split</element>
             <position>2</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>9ffca6f393a407101d04f29ddd03d66a</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>7a1cb70093bc87101d04f29ddd03d68a</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
@@ -58,13 +58,13 @@
             <element>pagina_pai</element>
             <position>3</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>1ffca6f393a407101d04f29ddd03d66b</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>f61cb70093bc87101d04f29ddd03d68b</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -72,13 +72,13 @@
             <element>.end_split</element>
             <position>4</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>9bfca6f393a407101d04f29ddd03d66c</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>761cb70093bc87101d04f29ddd03d68c</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>
@@ -86,41 +86,83 @@
             <element>descricao</element>
             <position>5</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>1bfca6f393a407101d04f29ddd03d66d</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>f21cb70093bc87101d04f29ddd03d68d</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>cffca6f393a407101d04f29ddd03d64e</element>
+            <element>721cb70093bc87101d04f29ddd03d66d</element>
             <position>6</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>97fca6f393a407101d04f29ddd03d66e</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>721cb70093bc87101d04f29ddd03d68e</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type>annotation</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
-            <element>parametros_caracteristicos</element>
+            <element>.begin_split</element>
             <position>7</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2026-05-06 13:56:42</sys_created_on>
-            <sys_id>17fca6f393a407101d04f29ddd03d66f</sys_id>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>fe1cb70093bc87101d04f29ddd03d68e</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2026-05-06 13:56:42</sys_updated_on>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
+            <sys_user/>
+            <type>.begin_split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>parametros_caracteristicos</element>
+            <position>8</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>7e1cb70093bc87101d04f29ddd03d68f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.split</element>
+            <position>9</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>fa1cb70093bc87101d04f29ddd03d690</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
+            <sys_user/>
+            <type>.split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>parametros_da_pagina_pai</element>
+            <position>10</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-07 14:20:51</sys_created_on>
+            <sys_id>7a1cb70093bc87101d04f29ddd03d691</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_1083828_servic_0_breadcrumbs" sys_domain="global" view="Default view">d9c56ef3936407101d04f29ddd03d6a3</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-07 14:20:51</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
